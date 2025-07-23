@@ -1,0 +1,84 @@
+ 3. Insert multiple documents
+db.customers.insertMany([
+  { customer_id: "C001", name: "Anaya", age: 30, city: "Chennai", status: "active" },
+  { customer_id: "C002", name: "Ravi", age: 45, city: "Delhi", status: "inactive" },
+  { customer_id: "C003", name: "Sneha", age: 27, city: "Mumbai", status: "active" },
+  { customer_id: "C004", name: "Vikram", age: 52, city: "Hyderabad", status: "pending" },
+  { customer_id: "C005", name: "Meera", age: 38, city: "Pune", status: "active" },
+  { customer_id: "C006", name: "Ajay", age: 26, city: "Bangalore", status: "inactive" },
+  { customer_id: "C007", name: "Nisha", age: 41, city: "Jaipur", status: "active" },
+  { customer_id: "C008", name: "Arun", age: 33, city: "Ahmedabad", status: "pending" },
+  { customer_id: "C009", name: "Divya", age: 29, city: "Kolkata", status: "active" },
+  { customer_id: "C010", name: "Kiran", age: 36, city: "Lucknow", status: "inactive" }
+])
+
+// 4. Read queries
+db.customers.find()
+db.customers.find({ city: "Delhi" })
+db.customers.find({ age: { $gte: 30 } })
+db.customers.find({}, { name: 1, city: 1 })
+db.customers.find({}, { _id: 0, name: 1 })
+
+// Logical operators
+db.customers.find({ $or: [ { city: "Pune" }, { status: "pending" } ] })
+db.customers.find({ $and: [ { status: "active" }, { age: { $gte: 30 } } ] })
+db.customers.find({ $and: [ { status: "active" }, { $or: [ { city: "Delhi" }, { city: "Mumbai" } ] } ] })
+db.customers.find({ $nor: [ { status: "active" }, { city: "Chennai" } ] })
+
+// Comparison operators
+db.customers.find({ age: { $gt: 35 } })
+db.customers.find({ age: { $lte: 40 } })
+db.customers.find({ age: { $ne: 29 } })
+
+// IN and NIN
+db.customers.find({ city: { $in: ["Delhi", "Mumbai", "Chennai"] } })
+db.customers.find({ status: { $nin: ["active", "pending"] } })
+
+// Regex
+db.customers.find({ name: /^A/ })
+db.customers.find({ name: { $regex: /ya$/ } })
+db.customers.find({ name: { $regex: /vi/, $options: "i" } })
+
+// Pagination and sorting
+db.customers.find().skip(10).limit(5)
+db.customers.find().sort({ age: 1 })
+db.customers.find().sort({ age: -1 })
+
+// 5. Update operations
+db.customers.updateOne(
+  { customer_id: "C003" },
+  { $set: { status: "inactive" } }
+)
+
+db.customers.updateMany(
+  { city: "Delhi" },
+  { $set: { status: "active" } }
+)
+
+db.customers.updateOne(
+  { name: "Ravi" },
+  { $unset: { status: "" } }
+)
+
+db.customers.updateOne(
+  { name: "Ajay" },
+  { $inc: { age: 2 } }
+)
+
+db.customers.updateMany(
+  {},
+  { $rename: { city: "location" } }
+)
+
+db.customers.replaceOne(
+  { customer_id: "C001" },
+  { customer_id: "C001", name: "Arya", age: 33, location: "Coimbatore", status: "active" }
+)
+
+// 6. Delete operations
+db.customers.deleteOne({ name: "Ravi" })
+db.customers.deleteMany({ status: "inactive" })
+
+// 7. Count and distinct
+db.customers.countDocuments({ status: "active" })
+db.customers.distinct("location")
